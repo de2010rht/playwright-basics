@@ -1,0 +1,6 @@
+**/.allure
+**/.github/modernize
+**/.vscode
+**/target
+**/allure-results
+.DS_Store
