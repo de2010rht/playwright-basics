@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Sauce Demo Test Suite" verbose="2" parallel="false" thread-count="1">
+<suite name="Sauce Demo Test Suite" verbose="2" parallel="tests" thread-count="2">
 
     <listeners>
         <!-- Custom listener to capture TestNG events for reporting -->
@@ -9,7 +9,7 @@
         <listener class-name="io.qameta.allure.testng.AllureTestNg" />
     </listeners>
 
-    <test name="Login Test With Valid Credentials" preserve-order="true">
+    <test name="Login Test With Valid Credentials" preserve-order="false">
         <classes>
             <class name="com.learn.auto.tests.LoginTest">
                 <methods>
@@ -20,7 +20,7 @@
         </classes>
     </test>
 
-    <test name="Login Test With Locked Credentials" preserve-order="true">
+    <test name="Login Test With Locked Credentials" preserve-order="false">
         <parameter name="username" value="locked_out_user"/>
         <parameter name="password" value="secret_sauce"/>
         <classes>
@@ -33,7 +33,7 @@
         </classes>
     </test>
 
-    <test name="Product Catalog Test" preserve-order="true">
+    <test name="Product Catalog Test" preserve-order="false">
         <classes>
             <class name="com.learn.auto.tests.ProductCatalogTest" />
         </classes>
