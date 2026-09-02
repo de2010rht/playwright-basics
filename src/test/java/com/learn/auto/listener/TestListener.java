@@ -231,14 +231,14 @@ public class TestListener implements ISuiteListener, ITestListener, IConfigurati
             return;
         }
 
-        Page page = baseTest.getPage();
-        if (page == null || page.isClosed())
-        {
-            return;
-        }
-
         try
         {
+            Page page = baseTest.getPage();
+            if (page == null || page.isClosed())
+            {
+                return;
+            }
+
             byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
             Allure.addAttachment("Failure screenshot", "image/png", new ByteArrayInputStream(screenshot), ".png");
         }
