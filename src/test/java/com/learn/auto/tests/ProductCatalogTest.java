@@ -12,6 +12,8 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.learn.auto.base.BaseTest;
+import com.learn.auto.pages.LoginPage;
+import com.learn.auto.pages.ProductCatalogPage;
 import com.learn.auto.utilities.JsonReader;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -35,23 +37,21 @@ public class ProductCatalogTest extends BaseTest {
         JsonNode users = JsonReader.readJsonFile("logincreds.json").path("users");
         JsonNode firstUser = users.get(0);
 
-        page.getByPlaceholder("Username").fill(firstUser.path("username").asText());
-        page.getByPlaceholder("Password").fill(firstUser.path("password").asText());
-        page.locator("#login-button").click();
+        LoginPage loginPage = new LoginPage(page);
+        loginPage.login(firstUser.path("username").asText(), firstUser.path("password").asText());
 
-        assertThat(page.locator(".title")).hasText("Products");
+        ProductCatalogPage catalogPage = new ProductCatalogPage(page);
+        assertThat(catalogPage.pageTitle()).hasText("Products");
 
         String sortValue = getSortOptionValue(sortOption);
-        page.locator("select[data-test='product-sort-container']").selectOption(sortValue);
+        catalogPage.sortBy(sortValue);
 
-        List<String> actualProductNames = page.locator(".inventory_item_name")
-                .allTextContents()
+        List<String> actualProductNames = catalogPage.productNames()
                 .stream()
                 .map(String::trim)
                 .collect(Collectors.toList());
 
-        List<Double> actualProductPrices = page.locator(".inventory_item_price")
-                .allTextContents()
+        List<Double> actualProductPrices = catalogPage.productPrices()
                 .stream()
                 .map(priceText -> Double.valueOf(priceText.replace("$", "")))
                 .collect(Collectors.toList());
