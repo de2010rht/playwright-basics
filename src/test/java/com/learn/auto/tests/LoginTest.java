@@ -6,10 +6,9 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.learn.auto.base.BaseTest;
+import com.learn.auto.pages.LoginPage;
 import com.learn.auto.utilities.JsonReader;
-import com.microsoft.playwright.Page;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Test class for login functionality. This class extends BaseTest to inherit the setup and teardown methods for Playwright.
@@ -32,11 +31,10 @@ public class LoginTest extends BaseTest {
 
     @Test(dataProvider = "loginData")
     public void testLogin(String username, String password) {
-        page.getByPlaceholder("Username").fill(username);
-        page.getByPlaceholder("Password").fill(password);
-        page.click("#login-button");
+        LoginPage loginPage = new LoginPage(page);
+        loginPage.login(username, password);
 
-        assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Open Menu"))).isVisible();
+        assertThat(loginPage.openMenuButton()).isVisible();
     }
 
     @Test
@@ -45,13 +43,12 @@ public class LoginTest extends BaseTest {
         page.onConsoleMessage(handler -> { System.out.printf("Console log found : %s : %s", handler.type(), handler.text()); });
         page.onPageError(error -> { System.out.printf("Error found : %s", error); });
 
-        page.getByPlaceholder("Username").fill(username);
-        page.getByPlaceholder("Password").fill(password);
-        page.click("#login-button");
+        LoginPage loginPage = new LoginPage(page);
+        loginPage.login(username, password);
 
-        assertThat(page.getByText("Epic sadface: Sorry, this user has been locked out.")).isVisible();
+        assertThat(loginPage.lockedUserError()).isVisible();
 
-        var crossIcons = page.locator("svg[data-prefix='fas']").all();
+        var crossIcons = loginPage.errorIcons();
         for (var crossIcon : crossIcons) {
             assertThat(crossIcon).isVisible();
         }
