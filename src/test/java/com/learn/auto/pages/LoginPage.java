@@ -2,11 +2,12 @@ package com.learn.auto.pages;
 
 import java.util.List;
 
+import com.learn.auto.base.BasePage;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
-public class LoginPage
+public class LoginPage extends BasePage
 {
     private final Locator usernameInput;
     private final Locator passwordInput;
@@ -17,6 +18,7 @@ public class LoginPage
 
     public LoginPage(Page page)
     {
+        super(page);
         usernameInput = page.getByPlaceholder("Username");
         passwordInput = page.getByPlaceholder("Password");
         loginButton = page.locator("#login-button");

@@ -2,10 +2,11 @@ package com.learn.auto.pages;
 
 import java.util.List;
 
+import com.learn.auto.base.BasePage;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-public class ProductCatalogPage
+public class ProductCatalogPage extends BasePage
 {
     private final Locator pageTitle;
     private final Locator sortDropdown;
@@ -14,6 +15,7 @@ public class ProductCatalogPage
 
     public ProductCatalogPage(Page page)
     {
+        super(page);
         pageTitle = page.locator(".title");
         sortDropdown = page.locator("select[data-test='product-sort-container']");
         productNames = page.locator(".inventory_item_name");
