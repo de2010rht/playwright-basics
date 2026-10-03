@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.learn.auto.base.BaseTest;
+import com.learn.auto.model.ProductItem;
 import com.learn.auto.pages.LoginPage;
 import com.learn.auto.pages.ProductCatalogPage;
 import com.learn.auto.utilities.JsonReader;
@@ -58,8 +59,8 @@ public class ProductCatalogTest extends BaseTest {
 
         List<ProductItem> expectedCatalog = buildExpectedCatalogFromJson(sortOption);
 
-        List<String> expectedProductNames = expectedCatalog.stream().map(ProductItem::name).collect(Collectors.toList());
-        List<Double> expectedProductPrices = expectedCatalog.stream().map(ProductItem::price).collect(Collectors.toList());
+        List<String> expectedProductNames = expectedCatalog.stream().map(ProductItem::getName).collect(Collectors.toList());
+        List<Double> expectedProductPrices = expectedCatalog.stream().map(ProductItem::getPriceValue).collect(Collectors.toList());
 
         switch (sortOption) {
             case "Name (A to Z)" -> {
@@ -97,43 +98,23 @@ public class ProductCatalogTest extends BaseTest {
         List<ProductItem> items = new ArrayList<>();
 
         for (JsonNode product : productsJson) {
-            items.add(new ProductItem(
-                    product.path("title").asText(),
-                    Double.valueOf(product.path("price").asText().replace("$", ""))));
+            items.add(ProductItem.fromJson(product));
         }
 
         Comparator<ProductItem> comparator = switch (sortOption) {
-            case "Name (A to Z)" -> Comparator.comparing(ProductItem::name, Comparator.naturalOrder());
-            case "Name (Z to A)" -> Comparator.comparing(ProductItem::name, Comparator.reverseOrder());
+            case "Name (A to Z)" -> Comparator.comparing(ProductItem::getName, Comparator.naturalOrder());
+            case "Name (Z to A)" -> Comparator.comparing(ProductItem::getName, Comparator.reverseOrder());
             case "Price (low to high)" -> (left, right) -> {
-                int result = Double.compare(left.price, right.price);
-                return (result != 0) ? result : left.name.compareTo(right.name);
+                int result = Double.compare(left.getPriceValue(), right.getPriceValue());
+                return (result != 0) ? result : left.getName().compareTo(right.getName());
             };
             case "Price (high to low)" -> (left, right) -> {
-                int result = Double.compare(right.price, left.price);
-                return (result != 0) ? result : left.name.compareTo(right.name);
+                int result = Double.compare(right.getPriceValue(), left.getPriceValue());
+                return (result != 0) ? result : left.getName().compareTo(right.getName());
             };
             default -> throw new IllegalArgumentException("Unsupported sort option: " + sortOption);
         };
 
         return items.stream().sorted(comparator).collect(Collectors.toList());
-    }
-
-    private static class ProductItem {
-        private final String name;
-        private final Double price;
-
-        ProductItem(String name, Double price) {
-            this.name = name;
-            this.price = price;
-        }
-
-        String name() {
-            return name;
-        }
-
-        Double price() {
-            return price;
-        }
     }
 }
