@@ -41,4 +41,14 @@ public class ProductCatalogPage extends BasePage
     {
         return productPrices.allTextContents();
     }
+
+    public Locator productByName(String productName)
+    {
+        return productNames.filter(new Locator.FilterOptions().setHasText(productName));
+    }
+
+    public void openProduct(String productName)
+    {
+        productByName(productName).click();
+    }
 }

@@ -38,4 +38,10 @@
             <class name="com.learn.auto.tests.ProductCatalogTest" />
         </classes>
     </test>
+
+    <test name="Product Details Test" preserve-order="false">
+        <classes>
+            <class name="com.learn.auto.tests.ProductDetailsTest" />
+        </classes>
+    </test>
 </suite>
